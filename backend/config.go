@@ -8,7 +8,7 @@ import (
 )
 
 type Env struct {
-	ServerPort  string `env:"SERVER_PORT,required"`
+	SERVER_PORT  string `env:"SERVER_PORT,required"`
 	API_KEY     string `env:"API_KEY,required"`
 	DB_HOST     string `env:"DB_HOST,required"`
 	DB_NAME     string `env:"DB_NAME,required"`
