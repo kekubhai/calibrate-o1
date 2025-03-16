@@ -232,10 +232,12 @@ func processTradeData(trade *TradeData, db *gorm.DB) {
 		tempCandle.LowPrice = price
 	}
 
+	// 
 	// Store the tempCandle for the symbol
 	tempCandles[symbol] = tempCandle
 
-	// Write to the broadcast channel live ongoing channel
+	//
+	//  Write to the broadcast channel live ongoing channel
 	broadcast <- &BroadcastMessage{
 		UpdateType: Live,
 		Candle:     tempCandle.toCandle(),
