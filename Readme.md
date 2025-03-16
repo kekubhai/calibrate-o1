@@ -1,4 +1,4 @@
-# Calibrate-O1: Real-Time Stock Data App <img src="logo.png" alt="Calibrate-O1 Logo" width="50"/>
+# Calibrate-O1: Real-Time Stock Data App <img src="/public/logo.png" alt="Calibrate-O1 Logo" width="50"/>
 
 > Experience the pulse of the market with real-time stock data at your fingertips. Calibrate-O1 delivers up-to-the-minute stock prices and OHLC candle data with a sleek, intuitive interface.
 
