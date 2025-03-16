@@ -75,13 +75,14 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to upgrate connection:", err)
 	}
 
-	// Close ws connection & unregister the client when they disconnect
+
 	defer conn.Close()
 	defer func() {
 		delete(clientConns, conn)
 		log.Println("Client disconnected!")
 	}()
 
+	
 	// Register the new client to the symbol they're subscribing to
 	for {
 		_, symbol, err := conn.ReadMessage()
@@ -95,13 +96,16 @@ func WSHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Fetch all past candles for all of the symbols
+
+//  Fetch all past candles for all of the symbols
 func StocksHistoryHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
-	// Query the db for all candle data from all symbols
+	//
+	//  Query the db for all candle data from all symbols
 	var candles []Candle
 	db.Order("timestamp asc").Find(&candles)
 
-	// Create a map to group data by symbol
+	//
+	//  Create a map to group data by symbol
 	groupedData := make(map[string][]Candle)
 
 	// Group the candles by symbol
@@ -110,6 +114,7 @@ func StocksHistoryHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 		groupedData[symbol] = append(groupedData[symbol], candle)
 	}
 
+	// 
 	// Marshal the grouped data into JSON and send over http
 	jsonResponse, _ := json.Marshal(groupedData)
 	w.Header().Set("Content-Type", "application/json")
