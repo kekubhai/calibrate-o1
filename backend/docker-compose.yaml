@@ -1,50 +1,46 @@
 version: "3.9"
 
 services:
-    app:
-        tty: true
-        restart: always
-        image: calibrate-o1
-        container_name: calibrate-o1
-        build: .
-        ports:
-            - 3000:3000
-        env_file:
-            - .env
-        networks:
-            - application
-        depends_on:
-            db:
-                condition: service_healthy
-        volumes:
-            - .:/src/app
-        command: air -c .air.toml                  
+  app:
+    tty: true
+    restart: always
+    image: calibrate-o1
+    container_name: calibrate-o1
+    build: .
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    networks:
+      - application
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/src/app
+    command: air -c .air.toml
 
-
-    db:
-        image: postgres:alpine
-        container_name: calibrate-o1-db
-        environment:
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_PASSWORD: ${DB_PASSWORD}
-            POSTGRES_HOST: ${DB_HOST}
-            POSTGRES_DB: ${DB_NAME}
-        ports:
-            - 5432:5432
-        volumes:
-            - postgres-db:/var/lib/postgresql/data  
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-            interval: 10s
-            timeout: 5s
-            retries: 5  
+  db:
+    image: postgres:alpine
+    container_name: calibrate-o1-db
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - 5432:5432
+    volumes: 
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - application
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "${DB_NAME}", "-U", "${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 networks:
-    application:
+  application:
 
 volumes:
-    postgres-db:
-
-
-
-
+  postgres-db:
