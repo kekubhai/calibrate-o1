@@ -1,0 +1,15 @@
+version: '3'
+
+tasks:
+  start:
+    desc: "Start the application with Docker Compose"
+    cmds:
+      - docker compose up --build
+    silent: true
+
+  stop:
+    desc: "Stop the application and remove volumes and images"
+    cmds:
+      - docker-compose down -v
+      - docker rmi calibrate-o1
+    silent: true
