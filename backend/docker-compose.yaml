@@ -12,6 +12,14 @@ services:
 
         env_file:
             - .env
+        networks:
+              -application
+        depeends_on:
+            -db:
+               condition:service_healthy
+        volumes:
+         -.:/src/app
+        command: air -c .air.toml                  
             
 
 
