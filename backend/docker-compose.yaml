@@ -14,7 +14,7 @@ services:
         networks:
             - application
         depends_on:
-            - db:
+            db:
                 condition: service_healthy
         volumes:
             - .:/src/app
@@ -24,7 +24,7 @@ services:
     db:
         image: postgres:alpine
         container_name: calibrate-o1-db
-        environmnt:
+        environment:
             POSTGRES_USER: ${DB_USER}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
             POSTGRES_HOST: ${DB_HOST}
@@ -32,7 +32,7 @@ services:
         ports:
             - 5432:5432
         volumes:
-            -postgres-db:/var/lib/postgresql/data  
+            - postgres-db:/var/lib/postgresql/data  
         healthcheck:
             test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
             interval: 10s
@@ -43,9 +43,8 @@ networks:
     application:
 
 volumes:
-     -postgres-db                
-
-            
+    postgres-db:
 
 
-   
+
+
