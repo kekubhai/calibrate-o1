@@ -1,5 +1,5 @@
 // import { StockRow } from "@/components/StockRow";
-// import { baseUrl } from "@/network";
+import { baseUrl } from "@/network";
 import { Candle } from "@/types/types";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -16,8 +16,7 @@ export default function IndexScreen() {
   async function fetchStocks() {
     try {
       setRefreshing(true);
-      const response = await fetch(`${
-        //baseUrl("http")}/stocks-history`);
+      const response = await fetch(`${baseUrl("http")}/stocks-history`);
       const json = await response.json();
       setStocks(json);
     } catch (error) {
