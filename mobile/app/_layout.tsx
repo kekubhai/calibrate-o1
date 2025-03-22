@@ -7,8 +7,10 @@ import { Alert, FlatList, StyleSheet, View } from "react-native";
 
 export default function IndexScreen() {
   const [stocks, setStocks] = useState<Record<string, Candle[]>>({});
+  
   const [refreshing, setRefreshing] = useState(false);
 
+  
   function onGoToStock(symbol: string) {
     router.push(`/stock/${symbol}`);
   }
