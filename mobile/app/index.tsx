@@ -30,12 +30,11 @@ export default function IndexScreen() {
 
   function renderItem({ item: symbol }: { item: string; }) {
     return (
-    //   <StockRow
-    //     onPress={() => onGoToStock(symbol)}
-    //     symbol={symbol}
-    //     candles={stocks[symbol]}
-    //   />
-    <></>
+      <StockRow
+      onPress={() => onGoToStock(symbol)}
+       symbol={symbol}   candles={stocks[symbol]}
+      />
+
     )
   }
 
