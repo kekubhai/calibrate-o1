@@ -15,7 +15,7 @@ export function StockImage({symbol, ...rest}:Props){
       },
       (error) => {
         // Image failed to load, use fallback
-        setUrl(getURIPath(symbol));
+        setUrl(getURIPath(symbol.toLowerCase()));
       }
     );
    }, [uri, symbol]);
