@@ -12,7 +12,7 @@ export default function IndexScreen() {
 
   
   function onGoToStock(symbol: string) {
-    router.push(`/stock/${symbol}`);
+  //  router.push(`/stock/${symbol}`);
   }
 
   async function fetchStocks() {
