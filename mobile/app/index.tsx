@@ -1,4 +1,5 @@
 // import { StockRow } from "@/components/StockRow";
+import { StockRow } from "@/components/StockRow";
 import { baseUrl } from "@/network";
 import { Candle } from "@/types/types";
 import { router, useFocusEffect } from "expo-router";
