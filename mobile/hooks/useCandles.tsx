@@ -1,6 +1,37 @@
 import { Candle } from "@/types/types";
 import { useEffect, useMemo, useState } from "react";
 
+
+/**
+ * useCandles - A custom hook for processing financial candle data
+ * Provides trend analysis, price difference calculations, and formatted chart data
+ */
+
+// Type definition for possible trending directions
+export type TrendingDirection = "up" | "down" | "flat";
+
+/**
+ * Utility function to calculate trending direction based on price difference
+ * @param current Current price value
+ * @param previous Previous price value
+ * @returns Trending direction ("up", "down", or "flat")
+ */
+const calculateTrendingDirection = (current: number, previous: number): TrendingDirection => {
+  const difference = current - previous;
+  return difference > 0 ? 'up' : difference < 0 ? 'down' : 'flat';
+};
+
+/**
+ * Utility function to calculate price difference and percentage
+ * @param current Current price value
+ * @param previous Previous price value
+ * @returns Object containing the difference amount and percentage
+ */
+const calculateDifference = (current: number, previous: number) => {
+  const amount = current - previous;
+  const percentage = (amount / previous) * 100;
+  return { amount, percentage };
+};
 const TRENDING_COLORS = {
   up: 'green',
   down: 'red',
