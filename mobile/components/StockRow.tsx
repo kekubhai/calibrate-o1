@@ -3,7 +3,33 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StockImage } from "./StockImage";
 import { LineChart, TLineChartDataProp } from "react-native-wagmi-charts";
 import { useCandles } from "@/hooks/useCandles";
+// Constants for stock trend visualization
+type TrendDirection = 'up' | 'down' | 'neutral';
 
+// Chart color configuration
+const CHART_COLORS = {
+  up: '#4CAF50',    // Green for positive trends
+  down: '#F44336',  // Red for negative trends
+  neutral: '#9E9E9E' // Gray for no change
+};
+
+// Trend symbols for displaying direction
+const TREND_SYMBOLS = {
+  up: '▲',
+  down: '▼',
+  neutral: '■'
+};
+
+// Helper function to format currency values consistently
+const formatCurrency = (value: number): string => {
+  return `$ ${value.toFixed(2)}`;
+};
+
+// Utility to calculate percentage change between two values
+const calculatePercentageChange = (startValue: number, endValue: number): number => {
+  if (startValue === 0) return 0;
+  return ((endValue - startValue) / Math.abs(startValue)) * 100;
+};
 interface Props {
   symbol: string;
   candles: Candle[];
