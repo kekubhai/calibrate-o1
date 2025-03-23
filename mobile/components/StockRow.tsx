@@ -1,6 +1,6 @@
 import { Candle } from "@/types/types";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
+import { StockImage } from "./StockImage";
 import { LineChart, TLineChartDataProp } from "react-native-wagmi-charts";
 import { useCandles } from "@/hooks/useCandles";
 
@@ -22,7 +22,7 @@ export function StockRow({ candles, symbol, onPress }: Props) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.imageContainer}>
-        {/* <StockImage style={styles.img} symbol={symbol} /> */}
+        <StockImage style={styles.img} symbol={symbol} />
         <Text style={styles.symbol}>{symbol}</Text>
       </View>
       <LineChart.Provider data={chartData as TLineChartDataProp}>

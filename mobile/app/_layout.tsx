@@ -1,4 +1,4 @@
-//import { StockRow } from "@/components/StockRow";
+import { StockRow } from "@/components/StockRow";
 import { baseUrl } from "@/network";
 import { Candle } from "@/types/types";
 import { router, useFocusEffect } from "expo-router";
@@ -12,7 +12,7 @@ export default function IndexScreen() {
 
   
   function onGoToStock(symbol: string) {
-    router.push(`/stock/${symbol}`);
+  //  router.push(`/stock/${symbol}`);
   }
 
   async function fetchStocks() {
@@ -32,13 +32,12 @@ export default function IndexScreen() {
 
   function renderItem({ item: symbol }: { item: string; }) {
     return (
-      // <StockRow
-      //   onPress={() => onGoToStock(symbol)}
-      //   symbol={symbol}
-      //   candles={stocks[symbol]}
-      // />
-      <>
-      </>
+       <StockRow
+        onPress={() => onGoToStock(symbol)}
+         symbol={symbol}
+         candles={stocks[symbol]}
+      />
+      
     );
   }
 
