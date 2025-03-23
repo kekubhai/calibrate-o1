@@ -14,10 +14,10 @@ const CHART_COLORS = {
 };
 
 // Trend symbols for displaying direction
+// Trend symbols for displaying direction (should be styled in red when used)
 const TREND_SYMBOLS = {
-  up: '▲',
-  down: '▼',
-  neutral: '■'
+  down: '▼',   // Red downward triangle 
+  neutral: '■' // Red square
 };
 
 // Helper function to format currency values consistently
