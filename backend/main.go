@@ -28,38 +28,65 @@ var (
 )
 
 func main() {
+	log.Println("Starting server...")
+
 	// Env config
 	env := EnvConfig()
 
-	// Db connection
-	db := DBConnection(env)
+	log.Printf("Config loaded: PORT=%s, DB_HOST=%s, DB_NAME=%s, DB_USER=%s",
+		env.SERVER_PORT, env.DB_HOST, env.DB_NAME, env.DB_USER)
 
-	// Connect to Finnhub WebSockets
-	finnhubWSConn := connectToFinnhub(env)
-	defer finnhubWSConn.Close()
+	// Db connection (non-fatal on failure)
+	db, err := initDB(env)
+	if err != nil {
+		log.Printf("WARNING: Database connection failed: %v", err)
+		log.Println("Server will start without database (limited functionality)")
+	}
 
-	// Handle Finnhub's WebSockets incoming messages
-	go handleFinnhubMessages(finnhubWSConn, db)
+	// Connect to Finnhub WebSockets (non-fatal on failure)
+	go func() {
+		if err := startFinnhub(env, db); err != nil {
+			log.Printf("WARNING: Finnhub connection failed: %v", err)
+		}
+	}()
 
 	// Broadcast candle updates to all clients connected
 	go broadcastUpdates()
 
 	// --- Endpoints ----
+	// Health check
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+	})
+
 	// Connect to the WebSocket
 	http.HandleFunc("/ws", WSHandler)
 
 	// Fetch all past candles for all of the symbols
 	http.HandleFunc("/stocks-history", func(w http.ResponseWriter, r *http.Request) {
+		if db == nil {
+			http.Error(w, "Database not available", http.StatusServiceUnavailable)
+			return
+		}
 		StocksHistoryHandler(w, r, db)
 	})
 
 	// Fetch all past candles from a specific symbol
 	http.HandleFunc("/stock-candles", func(w http.ResponseWriter, r *http.Request) {
+		if db == nil {
+			http.Error(w, "Database not available", http.StatusServiceUnavailable)
+			return
+		}
 		CandlesHandler(w, r, db)
 	})
 
 	// Serve the endpoints
-	http.ListenAndServe(fmt.Sprintf(":%s", env.SERVER_PORT), nil)
+	addr := fmt.Sprintf(":%s", env.SERVER_PORT)
+	log.Printf("Listening on %s", addr)
+	if err := http.ListenAndServe(addr, nil); err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
 }
 
 // Websocket endpoint to connect clients to the latest updates on the symbol they're subscribed to
@@ -137,18 +164,29 @@ func CandlesHandler(w http.ResponseWriter, r *http.Request, db *gorm.DB) {
 }
 
 // Connect to Finnhub WebSockets
-func connectToFinnhub(env *Env) *websocket.Conn {
+func startFinnhub(env *Env, db *gorm.DB) error {
 	ws, _, err := websocket.DefaultDialer.Dial(fmt.Sprintf("wss://ws.finnhub.io?token=%s", env.API_KEY), nil)
 	if err != nil {
-		panic(err)
+		return fmt.Errorf("finnhub dial: %w", err)
 	}
+	defer ws.Close()
 
 	for _, s := range symbols {
 		msg, _ := json.Marshal(map[string]interface{}{"type": "subscribe", "symbol": s})
 		ws.WriteMessage(websocket.TextMessage, msg)
 	}
 
-	return ws
+	log.Println("Connected to Finnhub WebSocket")
+	handleFinnhubMessages(ws, db)
+	return nil
+}
+
+func initDB(env *Env) (*gorm.DB, error) {
+	db, err := DBConnectionRaw(env)
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
 }
 
 // Handle Finnhub's WebSockets incoming messages
