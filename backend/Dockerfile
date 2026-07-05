@@ -1,9 +1,22 @@
-FROM golang:1.22.1-alpine3.19
+FROM golang:1.22.1-alpine3.19 AS builder
 
 WORKDIR /src/app
 
-RUN go install github.com/cosmtrek/air@v1.42.0
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
 
-RUN go mod tidy
+RUN CGO_ENABLED=0 GOOS=linux go build -o server .
+
+FROM alpine:3.19
+
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /app
+
+COPY --from=builder /src/app/server .
+
+EXPOSE 3000
+
+CMD ["./server"]
